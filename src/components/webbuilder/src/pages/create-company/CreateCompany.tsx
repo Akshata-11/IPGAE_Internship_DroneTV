@@ -2392,10 +2392,10 @@ const employeeOptions = [
         formData.manufacturingSubcategory.some(cat => !cat.includes('Not Applicable'))) && (
         <div className=" p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-4">DGCA Type Certificate</h3>
-          <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center">
-            <Upload size={48} className="mx-auto text-blue-400 mb-4" />
-            <p className="text-blue-600 mb-2">Upload your DGCA Type Certificate</p>
-            <p className="text-sm text-gray-500">Supported files: PDF or image. Max 10 MB.</p>
+          <div className="border-2 border-dashed text-gray-300 rounded-lg p-6 text-center">
+            <Upload size={48} className="mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-500 text-sm">Upload your DGCA Type Certificate</p>
+            <p className="text-gray-400 text-xs">Supported files: PDF or image. Max 10 MB.</p>
             
             <input
               type="file"
@@ -2415,7 +2415,7 @@ const employeeOptions = [
               }}
             />
             <button
-              className=" text-white px-4 py-2 mt-3 rounded-lg"
+              className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
               onClick={() => document.getElementById('dgca-certificate-input')?.click()}
               type="button"
             >
@@ -2435,10 +2435,10 @@ const employeeOptions = [
         formData.trainingCategory.some(cat => cat.includes('RPTO'))) && (
         <div className=" p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-4">RPTO Authorization Certificate</h3>
-          <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center">
-            <Upload size={48} className="mx-auto text-purple-400 mb-4" />
-            <p className="text-purple-600 mb-2">Upload your RPTO Authorization Certificate</p>
-            <p className="text-sm text-gray-500">Supported files: PDF or image. Max 10 MB.</p>
+          <div className="border-2 border-dashed text-gray-300 rounded-lg p-6 text-center">
+            <Upload size={48} className="mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-500 text-sm">Upload your RPTO Authorization Certificate</p>
+            <p className="text-gray-400 text-xs">Supported files: PDF or image. Max 10 MB.</p>
             
             <input
               type="file"
@@ -2458,7 +2458,7 @@ const employeeOptions = [
               }}
             />
             <button
-              className=" text-white px-4 py-2 mt-3 rounded-lg"
+             className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
               onClick={() => document.getElementById('rpto-certificate-input')?.click()}
               type="button"
             >
