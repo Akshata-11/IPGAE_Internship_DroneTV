@@ -35,6 +35,50 @@ interface FormData {
   companyName: string;
   contactName: string;
   category?: string;
+
+  /*New fields added*/
+ // NEW FIELDS - Add these to your existing interface
+  yearEstablished: number;
+  directorName: string;
+  directorWhatsApp: string;
+  directorEmail: string;
+  alternateContactPerson: string;
+  alternateContactPhone: string;
+  alternateContactEmail: string;
+  websiteURL: string;
+  companyProfileLink: string;
+  promoVideo5Min: string;
+  promoVideo1Min: string;
+  country: string;
+  numberOfEmployees: string;
+  
+  // Business Categories
+  mainBusinessCategory: string;
+  manufacturingSubcategory: string[];
+  servicesSubcategory: string[];
+  trainingCategory: string[];
+  photographyCategory: string[];
+  softwareCategory: string[];
+  gisServicesCategory: string[];
+  dgpsServicesCategory: string[];
+  otherManufacturing?: string; // optional: for "Other" manufacturing category
+  otherService?: string; // optional: for "Other" service category
+  otherTraining?: string; // optional: for "Other" training category
+  otherPhotography?: string; 
+otherSoftware?: string;
+otherGIS?: string;
+otherDGPS?: string; // optional: for "Other" photography category
+  
+  // Certificates
+  dgcaCertificate: string;
+  rptoCertificate: string;
+  
+  // Marketing
+  preferredPromoFormat: string[];
+
+/*Close-New fields added*/
+
+
   // Header & Hero
   companyLogo: string;
   navigationLinks: { label: string; link: string }[];
@@ -149,6 +193,45 @@ const CreateCompany: React.FC = () => {
     companyName: '',
     contactName: '',
     category: '',
+
+    // NEW FIELDS - Add these default values
+  yearEstablished: new Date().getFullYear(),
+  directorName: '',
+  directorWhatsApp: '',
+  directorEmail: '',
+  alternateContactPerson: '',
+  alternateContactPhone: '',
+  alternateContactEmail: '',
+  websiteURL: '',
+  companyProfileLink: '',
+  promoVideo5Min: '',
+  promoVideo1Min: '',
+  country: 'India',
+  numberOfEmployees: '1-10',
+  
+  // Business Categories
+  mainBusinessCategory: '',
+  manufacturingSubcategory: [],
+  servicesSubcategory: [],
+  trainingCategory: [],
+  photographyCategory: [],
+  softwareCategory: [],
+  gisServicesCategory: [],
+  dgpsServicesCategory: [],
+  otherManufacturing: '',
+  otherService: '',
+  otherTraining: '',
+  
+  
+  // Certificates
+  dgcaCertificate: '',
+  rptoCertificate: '',
+  
+  // Marketing
+  preferredPromoFormat: [],
+  
+/*Close-New fields added*/
+  
     // Header & Hero
     companyLogo: '',
     navigationLinks: [
@@ -232,13 +315,15 @@ const CreateCompany: React.FC = () => {
 
   const steps = [
     'Basic Details',
+    'Business Categories', // NEW STEP
     'Header & Hero',
     'About Section',
     'Services',
     'Products',
     'Clients & Testimonials',
     'Contact',
-    'Footer'
+    'Footer',
+    'Certificates & Marketing' // NEW STEP
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -294,105 +379,739 @@ const CreateCompany: React.FC = () => {
   };
 
 
+  // Helper function to handle multi-select arrays
+const handleMultiSelectChange = (field: string, value: string, checked: boolean) => {
+  setFormData(prev => {
+    const currentArray = prev[field as keyof FormData] as string[] || [];
+    if (checked) {
+      return {
+        ...prev,
+        [field]: [...currentArray, value]
+      };
+    } else {
+      return {
+        ...prev,
+        [field]: currentArray.filter(item => item !== value)
+      };
+    }
+  });
+};
+//new added
+// Business category options
+const businessCategoryOptions = [
+  'Drone Manufacturing',
+  'Drone Services', 
+  'DGCA RPTO - Drone Training and Certification',
+  'AI Based Solutions',
+  'Drone Software Development',
+  'GIS Services',
+  'DGPS Services',
+  'Aerial Photography and Videography',
+  'Other'
+];
+
+const manufacturingOptions = [
+  'Fixed-Wing Drones',
+  'Multi-Rotor Drones',
+  'Hybrid UAVs',
+  'Heavy-Lift Drones',
+  'Long-Range UAVs',
+  'Customized Drone Manufacturing',
+  'Not Applicable (We are not doing Manufacturing)',
+  'Other'
+];
+
+const servicesOptions = [
+  'Agricultural Drone Services',
+  'Aerial Mapping',
+  'Drone Inspections (e.g., Bridges, Pipelines, Solar Farms)',
+  'Construction Monitoring',
+  'Road Corridor Surveys',
+  'Mining and Quarry Surveys',
+  'Real Estate Imaging',
+  'Environmental Monitoring',
+  'Thermal Imaging',
+  'Wildlife Monitoring',
+  'Disaster Management Support',
+  'Precision Forestry',
+  'Search and Rescue Operations',
+  'Security Surveillance',
+  'Industrial Inspections',
+  'Not Applicable (We are not offering Drone Services)',
+  'Other'
+];
+
+const trainingOptions = [
+  'We are into Training But not a DGCA Certified RPTO',
+  'RPTO - Small Drones',
+  'RPTO - Medium Drones',
+  'RPTO - TTT',
+  'MICRO Drone Training',
+  'FPV Drones Training',
+  'Hybrid Drones',
+  'BVLOS Certification',
+  'Other'
+];
+
+const photographyOptions = [
+  'Real Estate Photography',
+  'Event Coverage',
+  'Industrial Videography',
+  'Cinematography',
+  'Drone-Based Advertising Content Creation',
+  'Wildlife Videography',
+  'Travel and Tourism Content Creation',
+  'Not Applicable (We are not offering Aerial Photography and Videography)',
+  'Other'
+];
+
+const softwareOptions = [
+  'Mapping and Surveying Software',
+  'Photogrammetry, and GIS integration services',
+  'Image Processing Software',
+  'Agriculture Normalized Difference Vegetation Index (NDVI) Software',
+  'AI/ML Integration for Drones and Drone DATA',
+  'Crowd Management Software',
+  'Drone Simulator Software',
+  'Drone Data Analytics',
+  'Drone Fleet Management Software',
+  'BVLOS Operation Software',
+  'Real-Time Monitoring Software',
+  'Not Applicable (We are not offering Drone Software Development)',
+  'Other'
+];
+
+const gisOptions = [
+  'Land Surveying',
+  'GIS Mapping',
+  'Remote Sensing',
+  'Urban Planning GIS Solutions',
+  'Environmental GIS Applications',
+  'Utility Mapping',
+  'GIS Data Analysis',
+  'GIS Software Development',
+  'Not Applicable (We are not offering GIS Services)',
+  'Other'
+];
+
+const dgpsOptions = [
+  'DGPS Land Surveys',
+  'Road and Highway Mapping',
+  'Geodetic Surveys',
+  'Precision Agriculture Solutions',
+  'Industrial Layout Surveys',
+  'Navigation and Positioning Solutions',
+  'DGPS Mapping for Archaeology',
+  'Not Applicable (We are not offering DGPS Services)',
+  'Other'
+];
+
+const promoFormatOptions = [
+  'YouTube - Your Company Promotion Video in Drone TV (Shorts / Full Video)',
+  'Social Media Shoutout in Drone Tv (Facebook, Instagram, Linkedin, X)',
+  'Article in Drone Digital Magazine (Premium - Payable)',
+  'In Drone Tv Website Feature (Premium - Payable)',
+  'Event Coverage / Live Show (Premium - Payable)',
+  'Company official\'s Interview (Premium - Payable)',
+  'Open to all opportunities (Interested in Premium - Paid Promotions)'
+];
+
+const employeeOptions = [
+  '1-10',
+  '11-50',
+  '51-200',
+  '201-500',
+  '501-1000',
+  '1000+'
+];
+
+//close new added
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-black mb-4">Basic Company Details</h2>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-black mb-4">Basic Company Details</h2>
+      
+      {/* Company Name */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+        <input
+          type="text"
+          required
+          placeholder="Your company name (used in URL)"
+          className="w-full px-4 py-2 border rounded-md"
+          value={formData.companyName}
+          onChange={e => {
+            const rawValue = e.target.value;
+            const cleaned = rawValue.replace(/[^a-zA-Z0-9]/g, '');
+            handleInputChange('companyName', cleaned);
+          }}
+        />
+      </div>
+
+      {/* Year Established */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Year Established *</label>
+        <input
+          type="number"
+          min="1900"
+          max={new Date().getFullYear()}
+          placeholder="2020"
+          className="w-full px-4 py-2 border rounded-md"
+          value={formData.yearEstablished}
+          onChange={e => handleInputChange('yearEstablished', parseInt(e.target.value))}
+        />
+      </div>
+
+      {/* Director Details */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Company MD / Director Name *</label>
+          <input
+            type="text"
+            placeholder="John Doe"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.directorName}
+            onChange={e => handleInputChange('directorName', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">MD / Director WhatsApp / Mobile *</label>
+          <input
+            type="tel"
+            placeholder="+91 9876543210"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.directorWhatsApp}
+            onChange={e => handleInputChange('directorWhatsApp', e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Director Email Address *</label>
+        <input
+          type="email"
+          placeholder="director@company.com"
+          className="w-full px-4 py-2 border rounded-md"
+          value={formData.directorEmail}
+          onChange={e => handleInputChange('directorEmail', e.target.value)}
+        />
+      </div>
+
+      {/* Alternative Contact */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3">Alternative Contact Person</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
             <input
               type="text"
-              required
-              placeholder="Your company name (used in URL)"
+              placeholder="Alternative contact name"
               className="w-full px-4 py-2 border rounded-md"
-              value={formData.companyName}
-              onChange={e => {
-                const rawValue = e.target.value;
-                // Remove anything that's not A-Z, a-z, or 0-9
-                const cleaned = rawValue.replace(/[^a-zA-Z0-9]/g, '');
-                handleInputChange('companyName', cleaned);
-              }}
+              value={formData.alternateContactPerson}
+              onChange={e => handleInputChange('alternateContactPerson', e.target.value)}
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+            <input
+              type="tel"
+              placeholder="+91 9876543210"
+              className="w-full px-4 py-2 border rounded-md"
+              value={formData.alternateContactPhone}
+              onChange={e => handleInputChange('alternateContactPhone', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input
+              type="email"
+              placeholder="alternate@company.com"
+              className="w-full px-4 py-2 border rounded-md"
+              value={formData.alternateContactEmail}
+              onChange={e => handleInputChange('alternateContactEmail', e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
 
+      {/* Contact Details */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.email}
+            onChange={e => handleInputChange('email', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Your Phone Number</label>
+          <input
+            type="tel"
+            placeholder="+91 9876543210"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.phone}
+            onChange={e => handleInputChange('phone', e.target.value)}
+          />
+        </div>
+      </div>
 
+      {/* Website & Profile Links */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Website URL *</label>
+          <input
+            type="url"
+            placeholder="https://yourcompany.com"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.websiteURL}
+            onChange={e => handleInputChange('websiteURL', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Company Profile Link</label>
+          <input
+            type="url"
+            placeholder="https://linkedin.com/company/yourcompany"
+            className="w-full px-4 py-2 border rounded-md"
+            value={formData.companyProfileLink}
+            onChange={e => handleInputChange('companyProfileLink', e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Video Links */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3">Promotional Videos</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">5 Min Promo Video Link</label>
+            <input
+              type="url"
+              placeholder="https://youtube.com/watch?v=..."
+              className="w-full px-4 py-2 border rounded-md"
+              value={formData.promoVideo5Min}
+              onChange={e => handleInputChange('promoVideo5Min', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">1 Min Promo Video Link</label>
+            <input
+              type="url"
+              placeholder="https://youtube.com/watch?v=..."
+              className="w-full px-4 py-2 border rounded-md"
+              value={formData.promoVideo1Min}
+              onChange={e => handleInputChange('promoVideo1Min', e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Address Details */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3">Office Address</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Office Address *</label>
+            <input
+              type="text"
+              placeholder="123 Main Street"
+              className="w-full px-4 py-2 border rounded-md"
+              value={formData.addressLine}
+              onChange={e => handleInputChange('addressLine', e.target.value)}
+            />
+          </div>
+          <div className="grid md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
               <input
                 type="text"
-                placeholder="John Doe"
+                placeholder="Hyderabad"
                 className="w-full px-4 py-2 border rounded-md"
-                onChange={e => handleInputChange('contactName', e.target.value)}
+                value={formData.city}
+                onChange={e => handleInputChange('city', e.target.value)}
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-2 border rounded-md"
-                value={formData.email}
-                onChange={e => handleInputChange('email', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input
-                type="tel"
-                placeholder="+91 9876543210"
-                className="w-full px-4 py-2 border rounded-md"
-                value={formData.phone}
-                onChange={e => handleInputChange('phone', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Promotional Code</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
               <input
                 type="text"
-                placeholder="Enter Promotional Code"
+                placeholder="Telangana"
                 className="w-full px-4 py-2 border rounded-md"
-                value={promoCode}
-                onChange={e => {
-                  setPromoCode(e.target.value);
-                  setPromoCodeError('');
-                }}
+                value={formData.state}
+                onChange={e => handleInputChange('state', e.target.value)}
               />
-              {promoCodeError && (
-                <div className="text-red-600 mt-1 text-sm">{promoCodeError}</div>
-              )}
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <select
+              <label className="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+              <input
+                type="text"
+                placeholder="India"
                 className="w-full px-4 py-2 border rounded-md"
-                value={formData.category || ''}
-                onChange={e => handleInputChange('category', e.target.value)}
-              >
-                <option value="">Select a category</option>
-                <option value="Drone Manufacturer">Drone Manufacturer</option>
-                <option value="Drone Service Provider">Drone Service Provider</option>
-                <option value="Spare Parts Provider">Spare Parts Provider</option>
-                <option value="Startup">Startup</option>
-                <option value="AI Solutions">AI Solutions</option>
-                <option value="GIS Solutions">GIS Solutions</option>
-                <option value="Training Institute">Training Institute</option>
-                <option value="Drone Pilot">Drone Pilot</option>
-                <option value="Agritech">Agritech</option>
-                <option value="Aerial Cinematography">Aerial Cinematography</option>
-                <option value="Media & Events">Media & Events</option>
-                <option value="Software Developer">Software Developer</option>
-                <option value="Government">Government</option>
-                <option value="Academia/College">Academia/College</option>
-                <option value="Other">Other</option>
-              </select>
+                value={formData.country}
+                onChange={e => handleInputChange('country', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code *</label>
+              <input
+                type="text"
+                placeholder="500001"
+                className="w-full px-4 py-2 border rounded-md"
+                value={formData.pinCode}
+                onChange={e => handleInputChange('pinCode', e.target.value)}
+              />
             </div>
           </div>
-        );
+        </div>
+      </div>
 
-      case 2: // Header & Hero
+      {/* Number of Employees */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Number of Employees *</label>
+        <select
+          className="w-full px-4 py-2 border rounded-md"
+          value={formData.numberOfEmployees}
+          onChange={e => handleInputChange('numberOfEmployees', e.target.value)}
+        >
+          {employeeOptions.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Promotional Code - Keep existing */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Promotional Code</label>
+        <input
+          type="text"
+          placeholder="Enter Promotional Code"
+          className="w-full px-4 py-2 border rounded-md"
+          value={promoCode}
+          onChange={e => {
+            setPromoCode(e.target.value);
+            setPromoCodeError('');
+          }}
+        />
+        {promoCodeError && (
+          <div className="text-red-600 mt-1 text-sm">{promoCodeError}</div>
+        )}
+      </div>
+    </div>
+  );
+
+  case 2:
+    return (
+    <div className="space-y-8">
+      <h2 className="text-2xl font-bold text-black mb-4">Business Categories</h2>
+      
+      {/* Main Business Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Main Business Category *</label>
+        <select
+          className="w-full px-4 py-2 border rounded-md"
+          value={formData.mainBusinessCategory}
+          onChange={e => handleInputChange('mainBusinessCategory', e.target.value)}
+        >
+          <option value="">Select your main business category</option>
+          {businessCategoryOptions.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </select>
+      </div>
+<div>
+  {/* Conditional Subcategories */}
+  {formData.mainBusinessCategory === 'Drone Manufacturing' && (
+    <div className="p-6 rounded-lg">
+      <h3 className="block text-sm font-medium text-gray-700 mb-2">
+        Manufacturing Subcategories
+      </h3>
+      <div className="space-y-2">
+        {manufacturingOptions.map(option => (
+          <div key={option}>
+            <label className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={formData.manufacturingSubcategory.includes(option)}
+                onChange={e =>
+                  handleMultiSelectChange(
+                    'manufacturingSubcategory',
+                    option,
+                    e.target.checked
+                  )
+                }
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">{option}</span>
+            </label>
+
+            {/* Show input if "Other" is checked */}
+            {option === 'Other' &&
+              formData.manufacturingSubcategory.includes('Other') && (
+                <input
+                  type="text"
+                  placeholder="Please specify..."
+                  value={formData.otherManufacturing || ''}
+                  onChange={e =>
+                    setFormData(prev => ({
+                      ...prev,
+                      otherManufacturing: e.target.value
+                    }))
+                  }
+                  className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+                />
+              )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<div>
+  {formData.mainBusinessCategory === 'Drone Services' && (
+    <div className="p-6 rounded-lg">
+      <h3 className="text-lg font-semibold mb-4">Service Subcategories</h3>
+      <div className="space-y-2">
+        {servicesOptions.map(option => (
+          <div key={option}>
+            <label className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={formData.servicesSubcategory.includes(option)}
+                onChange={e =>
+                  handleMultiSelectChange(
+                    'servicesSubcategory',
+                    option,
+                    e.target.checked
+                  )
+                }
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">{option}</span>
+            </label>
+
+            {/* Show input if "Other" is checked */}
+            {option === 'Other' &&
+              formData.servicesSubcategory.includes('Other') && (
+                <input
+                  type="text"
+                  placeholder="Please specify..."
+                  value={formData.otherService || ''}
+                  onChange={e =>
+                    setFormData(prev => ({
+                      ...prev,
+                      otherService: e.target.value
+                    }))
+                  }
+                  className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+                />
+              )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+     {formData.mainBusinessCategory === 'DGCA RPTO - Drone Training and Certification' && (
+  <div className="p-6 rounded-lg">
+    <h3 className="text-lg font-semibold mb-4">Training Categories</h3>
+    <div className="space-y-2">
+      {trainingOptions.map(option => (
+        <div key={option}>
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.trainingCategory.includes(option)}
+              onChange={e =>
+                handleMultiSelectChange(
+                  'trainingCategory',
+                  option,
+                  e.target.checked
+                )
+              }
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">{option}</span>
+          </label>
+
+          {/* Show input if "Other" is checked */}
+          {option === 'Other' &&
+            formData.trainingCategory.includes('Other') && (
+              <input
+                type="text"
+                placeholder="Please specify..."
+                value={formData.otherTraining || ''}
+                onChange={e =>
+                  setFormData(prev => ({
+                    ...prev,
+                    otherTraining: e.target.value
+                  }))
+                }
+                className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+              />
+            )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+      {/* Aerial Photography and Videography */}
+{formData.mainBusinessCategory === 'Aerial Photography and Videography' && (
+  <div className="p-6 rounded-lg">
+    <h3 className="text-lg font-semibold mb-4">Photography & Videography Categories</h3>
+    <div className="space-y-2">
+      {photographyOptions.map(option => (
+        <div key={option}>
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.photographyCategory.includes(option)}
+              onChange={e =>
+                handleMultiSelectChange('photographyCategory', option, e.target.checked)
+              }
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">{option}</span>
+          </label>
+
+          {option === 'Other' && formData.photographyCategory.includes('Other') && (
+            <input
+              type="text"
+              placeholder="Please specify..."
+              value={formData.otherPhotography || ''}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, otherPhotography: e.target.value }))
+              }
+              className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* Drone Software Development */}
+{formData.mainBusinessCategory === 'Drone Software Development' && (
+  <div className="p-6 rounded-lg">
+    <h3 className="text-lg font-semibold mb-4">Software Development Categories</h3>
+    <div className="space-y-2">
+      {softwareOptions.map(option => (
+        <div key={option}>
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.softwareCategory.includes(option)}
+              onChange={e =>
+                handleMultiSelectChange('softwareCategory', option, e.target.checked)
+              }
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">{option}</span>
+          </label>
+
+          {option === 'Other' && formData.softwareCategory.includes('Other') && (
+            <input
+              type="text"
+              placeholder="Please specify..."
+              value={formData.otherSoftware || ''}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, otherSoftware: e.target.value }))
+              }
+              className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* GIS Services */}
+{formData.mainBusinessCategory === 'GIS Services' && (
+  <div className="p-6 rounded-lg">
+    <h3 className="text-lg font-semibold mb-4">GIS Service Categories</h3>
+    <div className="space-y-2">
+      {gisOptions.map(option => (
+        <div key={option}>
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.gisServicesCategory.includes(option)}
+              onChange={e =>
+                handleMultiSelectChange('gisServicesCategory', option, e.target.checked)
+              }
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">{option}</span>
+          </label>
+
+          {option === 'Other' && formData.gisServicesCategory.includes('Other') && (
+            <input
+              type="text"
+              placeholder="Please specify..."
+              value={formData.otherGIS || ''}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, otherGIS: e.target.value }))
+              }
+              className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* DGPS Services */}
+{formData.mainBusinessCategory === 'DGPS Services' && (
+  <div className="p-6 rounded-lg">
+    <h3 className="text-lg font-semibold mb-4">DGPS Service Categories</h3>
+    <div className="space-y-2">
+      {dgpsOptions.map(option => (
+        <div key={option}>
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.dgpsServicesCategory.includes(option)}
+              onChange={e =>
+                handleMultiSelectChange('dgpsServicesCategory', option, e.target.checked)
+              }
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">{option}</span>
+          </label>
+
+          {option === 'Other' && formData.dgpsServicesCategory.includes('Other') && (
+            <input
+              type="text"
+              placeholder="Please specify..."
+              value={formData.otherDGPS || ''}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, otherDGPS: e.target.value }))
+              }
+              className="mt-2 ml-6 block w-full border border-gray-300 rounded p-2 text-sm"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+      </div>
+    )
+
+      case 3: // Header & Hero
         return (
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-black mb-6">Header & Hero Section</h3>
@@ -599,7 +1318,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 3: // About Section
+      case 4: // About Section
         return (
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-black mb-6">About Section</h3>
@@ -779,7 +1498,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 4: // Services
+      case 5: // Services
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -889,7 +1608,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 5: // Products
+      case 6: // Products
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -1034,7 +1753,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 6: // Clients & Testimonials
+      case 7: // Clients & Testimonials
         return (
           <div className="space-y-10">
             <h3 className="text-2xl font-bold text-black mb-6">Clients & Testimonials</h3>
@@ -1278,7 +1997,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 7: // Contact
+      case 8: // Contact
         return (
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-black mb-6">Contact Section</h3>
@@ -1391,7 +2110,7 @@ const CreateCompany: React.FC = () => {
           </div>
         );
 
-      case 8: // Footer
+      case 9: // Footer
         return (
           <div className="space-y-8">
             <h3 className="text-2xl font-bold text-black mb-6">Footer Section</h3>
@@ -1663,8 +2382,145 @@ const CreateCompany: React.FC = () => {
             )}
           </div>
         );
+    case 10://Certificates and Marketing Preferences
+      return (
+    <div className="space-y-8">
+      <h2 className="text-2xl font-bold text-black mb-4">Certificates & Marketing Preferences</h2>
+      
+      {/* DGCA Type Certificate Upload - Show only for Manufacturing */}
+      {(formData.mainBusinessCategory === 'Drone Manufacturing' || 
+        formData.manufacturingSubcategory.some(cat => !cat.includes('Not Applicable'))) && (
+        <div className=" p-6 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">DGCA Type Certificate</h3>
+          <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center">
+            <Upload size={48} className="mx-auto text-blue-400 mb-4" />
+            <p className="text-blue-600 mb-2">Upload your DGCA Type Certificate</p>
+            <p className="text-sm text-gray-500">Supported files: PDF or image. Max 10 MB.</p>
+            
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,image/*"
+              id="dgca-certificate-input"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  try {
+                    const url = await uploadImageToS3(file);
+                    handleInputChange('dgcaCertificate', url);
+                  } catch (err) {
+                    alert('Certificate upload failed: ' + (err as Error).message);
+                  }
+                }
+              }}
+            />
+            <button
+              className=" text-white px-4 py-2 mt-3 rounded-lg"
+              onClick={() => document.getElementById('dgca-certificate-input')?.click()}
+              type="button"
+            >
+              Choose Certificate
+            </button>
+            {formData.dgcaCertificate && (
+              <div className="mt-3 text-green-600 font-semibold">
+                ✅ Certificate uploaded successfully!
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
-      default:
+      {/* RPTO Authorization Certificate - Show only for Training */}
+      {(formData.mainBusinessCategory === 'DGCA RPTO - Drone Training and Certification' || 
+        formData.trainingCategory.some(cat => cat.includes('RPTO'))) && (
+        <div className=" p-6 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">RPTO Authorization Certificate</h3>
+          <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center">
+            <Upload size={48} className="mx-auto text-purple-400 mb-4" />
+            <p className="text-purple-600 mb-2">Upload your RPTO Authorization Certificate</p>
+            <p className="text-sm text-gray-500">Supported files: PDF or image. Max 10 MB.</p>
+            
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,image/*"
+              id="rpto-certificate-input"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  try {
+                    const url = await uploadImageToS3(file);
+                    handleInputChange('rptoCertificate', url);
+                  } catch (err) {
+                    alert('Certificate upload failed: ' + (err as Error).message);
+                  }
+                }
+              }}
+            />
+            <button
+              className=" text-white px-4 py-2 mt-3 rounded-lg"
+              onClick={() => document.getElementById('rpto-certificate-input')?.click()}
+              type="button"
+            >
+              Choose Certificate
+            </button>
+            {formData.rptoCertificate && (
+              <div className="mt-3 text-green-600 font-semibold">
+                ✅ Certificate uploaded successfully!
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Marketing Preferences */}
+      <div className=" p-6 rounded-lg">
+        <h3 className="text-lg font-semibold mb-4">Preferred Promo Format In Drone TV *</h3>
+        <p className="text-sm text-gray-600 mb-4">Select all promotional formats you're interested in:</p>
+        <div className="space-y-3">
+          {promoFormatOptions.map(option => (
+            <label key={option} className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                checked={formData.preferredPromoFormat.includes(option)}
+                onChange={e => handleMultiSelectChange('preferredPromoFormat', option, e.target.checked)}
+                className="mt-1 rounded border-gray-300"
+              />
+              <span className="text-sm leading-relaxed">{option}</span>
+            </label>
+          ))}
+        </div>
+        
+        {formData.preferredPromoFormat.length === 0 && (
+          <div className="mt-3 text-red-600 text-sm">
+            Please select at least one promotional format.
+          </div>
+        )}
+      </div>
+
+      {/* Summary Section */}
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg font-semibold mb-4">Form Summary</h3>
+        <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <p><strong>Company:</strong> {formData.companyName}</p>
+            <p><strong>Director:</strong> {formData.directorName}</p>
+            <p><strong>Category:</strong> {formData.mainBusinessCategory}</p>
+            <p><strong>Employees:</strong> {formData.numberOfEmployees}</p>
+          </div>
+          <div>
+            <p><strong>Website:</strong> {formData.websiteURL || 'Not provided'}</p>
+            <p><strong>Location:</strong> {formData.city}, {formData.state}</p>
+            <p><strong>Promo Formats:</strong> {formData.preferredPromoFormat.length} selected</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+      
+      
+      
+        default:
         return null;
     }
   };
@@ -1748,34 +2604,57 @@ const CreateCompany: React.FC = () => {
               </button>
 
               {currentStep < steps.length ? (
-                <button
-                  onClick={() => {
-                    const enteredCode = promoCode.trim().toLowerCase();
-                    const validCodes = ['mumbai2025', 'dronetv2025', 'dtea2025','pranay2025'];
+  <button
+    onClick={() => {
+      const enteredCode = promoCode.trim().toLowerCase();
+      const validCodes = ['mumbai2025', 'dronetv2025', 'dtea2025','pranay2025'];
 
-                    if (currentStep === 1 && !validCodes.includes(enteredCode)) {
-                      setPromoCodeError('Please enter a valid promotional code to proceed.');
-                      return;
-                    }
+      // Validation for Step 1
+      if (currentStep === 1) {
+        if (!validCodes.includes(enteredCode)) {
+          setPromoCodeError('Please enter a valid promotional code to proceed.');
+          return;
+        }
+        // Additional validation for required fields
+        if (!formData.companyName || !formData.directorName || !formData.directorEmail) {
+          alert('Please fill in all required fields marked with *');
+          return;
+        }
+      }
 
-                    setPromoCodeError(''); // clear error if valid
-                    setCurrentStep(Math.min(steps.length, currentStep + 1));
-                  }}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                  <ArrowRight size={20} />
-                </button>
+      // Validation for Step 2 (Business Categories)
+      if (currentStep === 2) {
+        if (!formData.mainBusinessCategory) {
+          alert('Please select a main business category.');
+          return;
+        }
+      }
 
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-black rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
-                >
-                  <Save size={20} />
-                  Create Company Page
-                </button>
-              )}
+      // Validation for Step 10 (Marketing)
+      if (currentStep === 10) {
+        if (formData.preferredPromoFormat.length === 0) {
+          alert('Please select at least one promotional format.');
+          return;
+        }
+      }
+
+      setPromoCodeError('');
+      setCurrentStep(Math.min(steps.length, currentStep + 1));
+    }}
+    className="flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    Next
+    <ArrowRight size={20} />
+  </button>
+) : (
+  <button
+    onClick={handleSubmit}
+    className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-black rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+  >
+    <Save size={20} />
+    Create Company Page
+  </button>
+)}
             </div>
           </div>
         </div>
