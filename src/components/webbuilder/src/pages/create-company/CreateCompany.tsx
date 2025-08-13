@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save, Upload, Plus, Trash2, Star } from 'lucide-react';
 import { uploadImageToS3 } from './src/utils/s3Upload';
 
+// import OpenAI from "openai";
+
+// // Initialize OpenAI client (store key in .env)
+// const openai = new OpenAI({
+//   apiKey: "",
+//   dangerouslyAllowBrowser: true// process.env.REACT_APP_OPENAI_API_KEY
+// });
+
+
 interface CompanyValue {
   icon?: string; // optional for select
   title: string;
@@ -185,7 +194,7 @@ const CreateCompany: React.FC = () => {
       // Success — maybe route to preview page
       navigate('/companies');
     } else {
-      // Handle error
+      // Handle erroraa
       alert('Failed to create company. Try again!');
     }
   };
@@ -661,8 +670,8 @@ const employeeOptions = [
       </div>
 
       {/* Website & Profile Links */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
+       <div className="grid md:grid-cols-2 gap-4">
+         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Website URL *</label>
           <input
             type="url"
@@ -671,7 +680,28 @@ const employeeOptions = [
             value={formData.websiteURL}
             onChange={e => handleInputChange('websiteURL', e.target.value)}
           />
-        </div>
+        </div> 
+{/* /*added website url input ai analysis*/ }
+{/* <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Website URL *</label>
+        <input
+  type="url"
+  placeholder="https://yourcompany.com"
+  className="w-full px-4 py-2 border rounded-md"
+  value={formData.websiteURL}
+  onChange={async e => {
+    const value = e.target.value;
+    handleInputChange('websiteURL', value);
+
+    // Trigger AI fill when a valid URL is entered
+    if (value.startsWith("http") && value.length > 10) {
+      await analyseCompanyFromURL(value);
+    }
+  }}
+/>
+</div> */}
+{/* /*added website url input ai analysis*/ }
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Company Profile Link</label>
           <input
@@ -2395,7 +2425,7 @@ const employeeOptions = [
           <div className="border-2 border-dashed text-gray-300 rounded-lg p-6 text-center">
             <Upload size={48} className="mx-auto text-gray-400 mb-4" />
             <p className="text-gray-500 text-sm">Upload your DGCA Type Certificate</p>
-            <p className="text-gray-400 text-xs">Supported files: PDF or image. Max 10 MB.</p>
+            <p className="text-gray-400 text-xs p-2">Supported files: PDF or image. Max 10 MB.</p>
             
             <input
               type="file"
@@ -2438,7 +2468,7 @@ const employeeOptions = [
           <div className="border-2 border-dashed text-gray-300 rounded-lg p-6 text-center">
             <Upload size={48} className="mx-auto text-gray-400 mb-4" />
             <p className="text-gray-500 text-sm">Upload your RPTO Authorization Certificate</p>
-            <p className="text-gray-400 text-xs">Supported files: PDF or image. Max 10 MB.</p>
+            <p className="text-gray-400 text-xs p-2">Supported files: PDF or image. Max 10 MB.</p>
             
             <input
               type="file"
@@ -2524,8 +2554,39 @@ const employeeOptions = [
         return null;
     }
   };
+/*Added for AI analysis of company from URL*/
+// const analyseCompanyFromURL = async (url: string) => {
+//   try {
+//     const prompt = `Visit ${url} and extract:
+//     {
+//       "description": "A 3–5 sentence company description.",
+//       "mission": "Short mission statement",
+//       "vision": "Short vision statement",
+//       "values": "Comma-separated list of core values"
+//     }`;
 
+//     const completion = await openai.chat.completions.create({
+//       model: "gpt-4o-mini",
+//       messages: [{ role: "user", content: prompt }]
+//     });
 
+//     const raw = completion.choices[0].message.content || "{}";
+//     const parsed = JSON.parse(raw);
+
+//     setFormData(prev => ({
+//       ...prev,
+//       aboutDescription: parsed.description || prev.aboutDescription,
+//       companyValues: [
+//         { icon: "target", title: "Mission", description: parsed.mission || "" },
+//         { icon: "eye", title: "Vision", description: parsed.vision || "" },
+//         { icon: "award", title: "Values", description: parsed.values || "" }
+//       ]
+//     }));
+//   } catch (error) {
+//     console.error("AI fetch failed", error);
+//   }
+// };
+/****** */
 
   return (
     <div className="min-h-screen bg-gray-50">
